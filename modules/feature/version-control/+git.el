@@ -26,6 +26,20 @@
   :config
   (set! :popup "^\\*git-gutter" nil '((select)))
 
+  ;; subtle diff indicators in the fringe
+  ;; places the git gutter outside the margins.
+  (setq-default fringes-outside-margins t)
+  ;; thin fringe bitmaps
+  (fringe-helper-define 'git-gutter-fr:added '(center repeated)
+    "XXX.....")
+  (fringe-helper-define 'git-gutter-fr:modified '(center repeated)
+    "XXX.....")
+  (fringe-helper-define 'git-gutter-fr:deleted 'bottom
+    "X......."
+    "XX......"
+    "XXX....."
+    "XXXX....")
+
   ;; Update git-gutter on focus (in case I was using git externally)
   (add-hook 'focus-in-hook #'git-gutter:update-all-windows)
 

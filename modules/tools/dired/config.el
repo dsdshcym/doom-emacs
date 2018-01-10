@@ -33,14 +33,6 @@
       (make-directory parent-directory t))))
 (push #'+dired|create-non-existent-directory find-file-not-found-functions)
 
-(after! evil
-  (add-transient-hook! 'dired-mode-hook
-    (map! :map dired-mode-map
-          :n "c" #'find-file
-          :n "d" #'dired-do-delete
-          :n "r" #'dired-do-rename)))
-
-
 ;;
 ;; Packages
 ;;

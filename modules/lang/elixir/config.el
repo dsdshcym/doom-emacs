@@ -5,6 +5,12 @@
   :mode "\\.elixir2$")
 
 
+(def-package! ob-elixir
+  :after org
+  :init
+  (add-to-list 'org-babel-load-languages '(elixir . t)))
+
+
 (def-package! smartparens-elixir
   :config
   ;; disable standard config; more disruptive than it needs to be

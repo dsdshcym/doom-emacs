@@ -154,10 +154,6 @@
   :config (evil-commentary-mode 1))
 
 
-(def-package! evil-easymotion
-  :commands (evilem-create evilem-default-keybindings))
-
-
 (def-package! evil-embrace
   :after evil-surround
   :commands (embrace-add-pair embrace-add-pair-regexp)

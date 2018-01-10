@@ -2,7 +2,10 @@
 
 (def-package! elixir-mode
   :mode "\\.exs?$"
-  :mode "\\.elixir2$"
+  :mode "\\.elixir2$")
+
+
+(def-package! smartparens-elixir
   :config
   ;; disable standard config; more disruptive than it needs to be
   (dolist (beg '("fn" "do" "def" "defp" "defmodule" "if" "unless" "case" "receive"))

@@ -3,5 +3,6 @@
 
 ;; +elixir.el
 (package! elixir-mode)
+(package! smartparens)
 (package! alchemist)
 (package! ac-alchemist)

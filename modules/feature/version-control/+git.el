@@ -101,5 +101,12 @@
 (def-package! evil-magit
   :when (featurep! :feature evil)
   :after magit
-  :init (setq evil-magit-want-horizontal-movement t))
+  :init (setq evil-magit-want-horizontal-movement t)
+  :config
+  (map! :map (magit-status-mode-map
+              magit-diff-mode-map
+              magit-process-mode-map
+              magit-blame-mode-map
+              magit-log-mode-map)
+        doom-leader-key nil))
 

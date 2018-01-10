@@ -2,7 +2,9 @@
 
 (def-package! ledger-mode
   :mode "\\.ledger$"
-  :config (setq ledger-clear-whole-transactions 1))
+  :config
+  (setq ledger-clear-whole-transactions 1)
+  (set! :company-backend 'ledger-mode '(company-capf)))
 
 
 (def-package! evil-ledger

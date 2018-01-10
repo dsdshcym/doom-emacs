@@ -282,23 +282,6 @@ the new algorithm is confusing, like in python or ruby."
   (add-hook 'doom-escape-hook #'+evil|escape-multiple-cursors))
 
 
-(def-package! evil-snipe
-  :commands (evil-snipe-mode evil-snipe-override-mode
-             evil-snipe-local-mode evil-snipe-override-local-mode)
-  :hook (doom-post-init . evil-snipe-mode)
-  :init
-  (setq evil-snipe-smart-case t
-        evil-snipe-scope 'line
-        evil-snipe-repeat-scope 'visible
-        evil-snipe-char-fold t
-        evil-snipe-disabled-modes '(magit-mode elfeed-show-mode elfeed-search-mode)
-        evil-snipe-aliases '((?\[ "[[{(]")
-                             (?\] "[]})]")
-                             (?\; "[;:]")))
-  :config
-  (evil-snipe-override-mode +1))
-
-
 (def-package! evil-surround
   :commands (global-evil-surround-mode
              evil-surround-edit

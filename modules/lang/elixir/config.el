@@ -2,7 +2,9 @@
 
 (def-package! elixir-mode
   :mode "\\.exs?$"
-  :mode "\\.elixir2$")
+  :mode "\\.elixir2$"
+  :config
+  (set! :electric 'elixir-mode :words '("else" "end")))
 
 
 (def-package! ob-elixir

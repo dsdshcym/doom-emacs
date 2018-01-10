@@ -27,6 +27,7 @@
   :after elixir-mode
   :hook (elixir-mode . alchemist-mode)
   :config
+  (set! :repl 'elixir-mode #'alchemist-iex-run)
   (set! :lookup 'elixir-mode
     :definition #'alchemist-goto-definition-at-point
     :documentation #'alchemist-help-search-at-point)

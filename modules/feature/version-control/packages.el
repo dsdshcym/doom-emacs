@@ -11,6 +11,8 @@
   (package! git-timemachine)
   (package! gitconfig-mode)
   (package! gitignore-mode)
-  (package! magit))
+  (package! magit)
+  (when (featurep! :feature evil)
+    (package! evil-magit)))
 
 ;;; TODO +hg

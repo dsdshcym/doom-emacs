@@ -5,7 +5,6 @@
 (package! evil-args)
 (package! evil-commentary)
 (package! evil-embrace)
-(package! evil-escape)
 (package! evil-exchange)
 (package! evil-indent-plus)
 (package! evil-matchit)

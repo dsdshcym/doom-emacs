@@ -208,20 +208,6 @@
         (default-value 'embrace--pairs-list)))
 
 
-(def-package! evil-escape
-  :commands evil-escape-mode
-  :init
-  (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
-        evil-escape-excluded-major-modes '(neotree-mode)
-        evil-escape-key-sequence "jk"
-        evil-escape-delay 0.25)
-  (add-hook 'doom-post-init-hook #'evil-escape-mode)
-  :config
-  ;; no `evil-escape' in minibuffer
-  (push #'minibufferp evil-escape-inhibit-functions)
-  (map! :irvo "C-g" #'evil-escape))
-
-
 (def-package! evil-exchange
   :commands evil-exchange
   :config
@@ -286,9 +272,6 @@ the new algorithm is confusing, like in python or ruby."
                 doom/backward-kill-to-bol-and-indent doom/newline-and-indent))
     (push (cons fn '((:default . evil-mc-execute-default-call)))
           evil-mc-custom-known-commands))
-
-  ;; disable evil-escape in evil-mc; causes unwanted text on invocation
-  (push 'evil-escape-mode evil-mc-incompatible-minor-modes)
 
   (defun +evil|escape-multiple-cursors ()
     "Clear evil-mc cursors and restore state."

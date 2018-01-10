@@ -3,6 +3,7 @@
 (setq ;; Always copy/delete recursively
       dired-recursive-copies  'always
       dired-recursive-deletes 'top
+      dired-dwim-target t
       ;; Auto refresh dired, but be quiet about it
       global-auto-revert-non-file-buffers t
       auto-revert-verbose nil

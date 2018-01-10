@@ -44,18 +44,3 @@
 ;;
 ;; Packages
 ;;
-
-(def-package! dired-k
-  :after dired
-  :config
-  (setq dired-k-style 'git)
-
-  (defun +dired*dired-k-highlight (orig-fn &rest args)
-    "Butt out if the requested directory is remote (i.e. through tramp)."
-    (unless (file-remote-p default-directory)
-      (apply orig-fn args)))
-  (advice-add #'dired-k--highlight :around #'+dired*dired-k-highlight)
-
-  (add-hook 'dired-initial-position-hook #'dired-k)
-  (add-hook 'dired-after-readin-hook #'dired-k-no-revert))
-

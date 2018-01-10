@@ -20,4 +20,17 @@
 
     ;; With the option of flychecking the buffer on escape, so we don't need
     ;; auto-flychecking on idle-change:
-    (delq 'idle-change flycheck-check-syntax-automatically)))
+    (delq 'idle-change flycheck-check-syntax-automatically))
+
+  ;; NOTE Adjust these bitmaps if you change `doom-fringe-size'
+  ;; because git-gutter is in the left fringe
+  (setq flycheck-indication-mode 'right-fringe)
+  ;; A non-descript, left-pointing arrow
+  (fringe-helper-define 'flycheck-fringe-bitmap-double-arrow 'center
+    "...X...."
+    "..XX...."
+    ".XXX...."
+    "XXXX...."
+    ".XXX...."
+    "..XX...."
+    "...X...."))

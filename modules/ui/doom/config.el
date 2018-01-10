@@ -54,20 +54,6 @@
   (setq hs-set-up-overlay #'+doom-set-up-overlay))
 
 
-;; NOTE Adjust these bitmaps if you change `doom-fringe-size'
-(after! flycheck
-  ;; because git-gutter is in the left fringe
-  (setq flycheck-indication-mode 'right-fringe)
-  ;; A non-descript, left-pointing arrow
-  (fringe-helper-define 'flycheck-fringe-bitmap-double-arrow 'center
-    "...X...."
-    "..XX...."
-    ".XXX...."
-    "XXXX...."
-    ".XXX...."
-    "..XX...."
-    "...X...."))
-
 ;; subtle diff indicators in the fringe
 (after! git-gutter-fringe
   ;; places the git gutter outside the margins.

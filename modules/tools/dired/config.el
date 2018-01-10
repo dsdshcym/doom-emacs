@@ -37,3 +37,7 @@
 ;;
 ;; Packages
 ;;
+
+(after! dired
+  (map! :map dired-mode-map
+        doom-leader-key nil))

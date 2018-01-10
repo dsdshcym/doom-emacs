@@ -570,13 +570,18 @@ Returns \"\" to not break --no-window-system."
        +doom-modeline-bar-width)
     ""))
 
+(def-modeline-segment! org-clock
+  (when (org-clock-is-active)
+    (propertize
+     org-mode-line-string
+     'face (if (active) 'doom-modeline-info))))
 
 ;;
 ;; Mode lines
 ;;
 
 (def-modeline! main
-  (bar matches " " buffer-info "  %l:%c %p  " selection-info)
+  (bar matches " " buffer-info "  %l:%c %p  " selection-info org-clock)
   (buffer-encoding major-mode vcs flycheck))
 
 (def-modeline! minimal

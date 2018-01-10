@@ -44,3 +44,8 @@
 
 (def-package! wdired
   :after dired)
+
+(def-package! dired-quick-sort
+  :after dired
+  :config
+  (dired-quick-sort-setup))

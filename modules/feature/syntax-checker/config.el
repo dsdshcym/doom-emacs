@@ -21,28 +21,3 @@
     ;; With the option of flychecking the buffer on escape, so we don't need
     ;; auto-flychecking on idle-change:
     (delq 'idle-change flycheck-check-syntax-automatically)))
-
-
-;; Long story short, `flycheck-popup-tip' works everywhere but only looks *ok*.
-;; `flycheck-pos-tip' looks great, but only in GUI Emacs on Linux. So we want:
-;;
-;; + GUI Emacs (Linux): pos-tip
-;; + GUI Emacs (MacOS): popup-tip
-;; + tty Emacs (anywhere): popup-tip
-
-(def-package! flycheck-pos-tip
-  :commands (flycheck-pos-tip-mode)
-  :config
-  (setq flycheck-pos-tip-timeout 10
-        ;; fallback to flycheck-popup-tip in terminal Emacs
-        flycheck-pos-tip-display-errors-tty-function
-        #'flycheck-popup-tip-show-popup
-        flycheck-display-errors-delay 0.7))
-
-(def-package! flycheck-popup-tip
-  :commands (flycheck-popup-tip-mode flycheck-popup-tip-show-popup))
-
-(after! flycheck
-  (if IS-MAC
-      (flycheck-popup-tip-mode)
-    (flycheck-pos-tip-mode)))

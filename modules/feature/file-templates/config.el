@@ -90,7 +90,6 @@
           ;; Markdown
           ("\\.md$"                          "__"               markdown-mode)
           ;; Org
-          ("\\.org$"                                          "__"            org-mode)
           ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+/README\\.org$" "__doom-readme" org-mode)
           ;; PHP
           ("\\.php$"                         "__"               php-mode)

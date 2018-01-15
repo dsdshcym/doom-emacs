@@ -29,6 +29,10 @@
   :after elixir-mode
   :hook (elixir-mode . alchemist-mode)
   :config
+  (set! :popup "^\\*alchemist elixir"
+     '((size . 0.35)) '((transient . 0) (select . ignore)))
+  (set! :popup "^\\*alchemist test"
+     '((size . 0.35)) '((transient . 0) (select . ignore)))
   (set! :repl 'elixir-mode #'alchemist-iex-run)
   (set! :lookup 'elixir-mode
     :definition #'alchemist-goto-definition-at-point

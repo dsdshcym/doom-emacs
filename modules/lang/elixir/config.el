@@ -22,7 +22,8 @@
   (sp-with-modes 'elixir-mode
     (sp-local-pair "do" "end" :when '(("RET" "<evil-ret>")) :post-handlers '("||\n[i]"))
     (sp-local-pair "do " " end")
-    (sp-local-pair "fn " " end")))
+    (sp-local-pair "->" "end" :when '(("RET" "<evil-ret>")) :post-handlers '("||\n[i]"))
+    (sp-local-pair "-> " " end")))
 
 
 (def-package! alchemist

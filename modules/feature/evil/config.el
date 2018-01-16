@@ -343,6 +343,23 @@ the new algorithm is confusing, like in python or ruby."
   :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block))
 
 
+(def-package! evil-briefcase
+  :commands (evil-briefcase-snake-lower
+             evil-briefcase-snake-lower
+             evil-briefcase-kebab-lower
+             evil-briefcase-kebab-lower
+             evil-briefcase-camel-lower
+             evil-briefcase-camel-upper)
+  :init
+  (map!
+   :m "gs_" 'evil-briefcase-snake-lower
+   :m "gss" 'evil-briefcase-snake-lower
+   :m "gs-" 'evil-briefcase-kebab-lower
+   :m "gsk" 'evil-briefcase-kebab-lower
+   :m "gsc" 'evil-briefcase-camel-lower
+   :m "gsC" 'evil-briefcase-camel-upper))
+
+
 ;;
 ;; Multiple cursors compatibility (for the plugins that use it)
 ;;

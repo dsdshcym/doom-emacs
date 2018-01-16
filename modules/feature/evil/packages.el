@@ -16,3 +16,4 @@
 (package! evil-vimish-fold)
 (package! evil-visualstar)
 (package! evil-lion)
+(package! evil-briefcase :recipe (:fetcher github :repo "dsdshcym/evil-briefcase"))

@@ -312,6 +312,13 @@ the new algorithm is confusing, like in python or ruby."
   :config
   (global-evil-visualstar-mode 1))
 
+(use-package evil-lion
+  :commands (evil-lion-left
+             evil-lion-right)
+  :init
+  (map!
+   :nv "gl" #'evil-lion-left
+   :nv "gL" #'evil-lion-right))
 
 ;;
 ;; Text object plugins

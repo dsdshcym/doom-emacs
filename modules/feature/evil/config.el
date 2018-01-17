@@ -158,6 +158,7 @@
   :commands (evil-embrace-enable-evil-surround-integration embrace-add-pair embrace-add-pair-regexp)
   :hook (LaTeX-mode . embrace-LaTeX-mode-hook)
   :hook (org-mode . embrace-org-mode-hook)
+  :hook (ruby-mode . embrace-ruby-mode-hook)
   :init
   (after! evil-surround
     (evil-embrace-enable-evil-surround-integration))

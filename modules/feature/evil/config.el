@@ -155,11 +155,12 @@
 
 
 (def-package! evil-embrace
-  :after evil-surround
-  :commands (embrace-add-pair embrace-add-pair-regexp)
+  :commands (evil-embrace-enable-evil-surround-integration embrace-add-pair embrace-add-pair-regexp)
   :hook (LaTeX-mode . embrace-LaTeX-mode-hook)
   :hook (org-mode . embrace-org-mode-hook)
   :init
+  (after! evil-surround
+    (evil-embrace-enable-evil-surround-integration))
   ;; Add extra pairs
   (add-hook! emacs-lisp-mode
     (embrace-add-pair ?\` "`" "'"))
@@ -169,7 +170,6 @@
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
   :config
   (setq evil-embrace-show-help-p nil)
-  (evil-embrace-enable-evil-surround-integration)
 
   (defun +evil--embrace-get-pair (char)
     (if-let* ((pair (cdr-safe (assoc (string-to-char char) evil-surround-pairs-alist))))

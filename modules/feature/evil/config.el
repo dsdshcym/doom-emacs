@@ -166,7 +166,7 @@
     (embrace-add-pair ?\` "`" "'"))
   (add-hook! (emacs-lisp-mode lisp-mode)
     (embrace-add-pair-regexp ?f "([^ ]+ " ")" #'+evil--embrace-elisp-fn))
-  (add-hook! (org-mode LaTeX-mode)
+  (add-hook! LaTeX-mode
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
   :config
   (setq evil-embrace-show-help-p nil)

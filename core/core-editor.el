@@ -167,8 +167,7 @@ extension, try to guess one."
   (setq sp-autowrap-region nil ; let evil-surround handle this
         sp-highlight-pair-overlay nil
         sp-cancel-autoskip-on-backward-movement nil
-        sp-show-pair-delay 0
-        sp-max-pair-length 3)
+        sp-show-pair-delay 0)
 
   ;; disable smartparens in evil-mode's replace state (they conflict)
   (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)

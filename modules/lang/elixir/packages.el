@@ -6,3 +6,4 @@
 (package! ob-elixir)
 (package! smartparens)
 (package! alchemist)
+(package! mix-format :recipe (:fetcher github :repo "anildigital/mix-format.el"))

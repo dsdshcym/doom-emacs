@@ -51,3 +51,11 @@
 
   (set! :company-backend 'elixir-mode '(alchemist-company company-yasnippet)))
 
+
+(def-package! mix-format
+  :commands (mix-format-before-save)
+  :init
+  (setq mixfmt-mix (executable-find "mix"))
+
+  (after! elixir-mode
+    (add-hook 'before-save-hook #'mix-format-before-save)))

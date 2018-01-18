@@ -8,8 +8,7 @@
         js2-highlight-external-variables nil
         js2-mode-show-parse-errors nil)
 
-  (add-hook! 'js2-mode-hook
-    #'(flycheck-mode highlight-indentation-mode rainbow-delimiters-mode))
+  (add-hook! 'js2-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
 
   (set! :repl 'js2-mode #'+javascript/repl)
   (set! :electric 'js2-mode :chars '(?\} ?\) ?.))

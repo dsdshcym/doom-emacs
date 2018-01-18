@@ -12,6 +12,7 @@
   (package! gitconfig-mode)
   (package! gitignore-mode)
   (package! magit)
+  (package! orgit)
   (when (featurep! :feature evil)
     (package! evil-magit)))
 

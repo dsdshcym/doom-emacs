@@ -94,6 +94,10 @@
   (set! :popup "^\\*magit" :ignore))
 
 
+(def-package! orgit
+  :after (org magit))
+
+
 (def-package! git-link
   :commands (git-link git-link-commit git-link-homepage))
 

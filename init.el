@@ -86,4 +86,6 @@
        org-page
        chinese
        mu4e
-       elfeed)
+       elfeed
+       chrome
+       )

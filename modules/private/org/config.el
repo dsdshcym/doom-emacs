@@ -307,7 +307,7 @@ unwanted space when exporting org-mode to html."
            :content-before "* TODO %a"
            :immediate-finish t)
           ("b" "Blog Thought" entry
-           (file+headline "~/Org/personal.org" "Blog")
+           (file+headline "~/Org/blogs.org" "Blog")
            (function +org/capture-template)
            :content-before "* TODO %^{Title}"
            :immediate-finish t)

@@ -418,4 +418,10 @@ unwanted space when exporting org-mode to html."
     (setq org-download-method 'attach)
     (setq org-download-screenshot-method "screencapture -i %s")))
 
+(def-package! smartparens-org
+  :config
+  (sp-with-modes 'org-mode
+    (sp-local-pair "*" "*" :post-handlers '(("[d1]" "SPC")))
+    (sp-local-pair "_" "_" :post-handlers '(("[d1]" "SPC")))))
+
 (load! +bindings)

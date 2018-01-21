@@ -70,7 +70,7 @@
                         (:endgroup)
                         ("TOWATCH" . ?W)
                         ("TOREAD" . ?R)))
-  (setq org-tags-exclude-from-inheritance '("elfeed"))
+  (setq org-tags-exclude-from-inheritance '("elfeed" "Book"))
 
   ;; -----------------------------
   ;; Archive

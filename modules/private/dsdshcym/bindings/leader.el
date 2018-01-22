@@ -52,6 +52,7 @@
    :desc "window"                      :nmvo "w"  evil-window-map
    (:desc "window management" :prefix "w"
      :desc "New frame"                 :nmvo "f" #'make-frame
+     :desc "New tab"                   :nmvo "t" #'+mac-new-tab
      :desc "Toggle Popup"              :nmvo "p" #'+popup/toggle
      :desc "Delete window"             :nmvo "d" #'evil-window-delete
      :desc "Maximize window"           :nmvo "m" #'delete-other-windows

@@ -1,6 +1,7 @@
 ;;; tools/macos/config.el -*- lexical-binding: t; -*-
 
 (when (eq window-system 'mac)
+  (setq mac-pass-command-to-system nil)
   (mac-auto-operator-composition-mode t))
 
 (def-package! dash-at-point

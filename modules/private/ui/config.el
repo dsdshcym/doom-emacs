@@ -36,15 +36,6 @@
   (setq solarized-scale-org-headlines nil)
   (setq doom-theme 'solarized-dark))
 
-(after! evil
-  (defun +evil*init-cursors (&rest _)
-    (setq evil-normal-state-cursor '(box "DarkGoldenrod2")
-          evil-insert-state-cursor '((bar . 2) "chartreuse3")
-          evil-emacs-state-cursor '(box "SkyBlue2")
-          evil-replace-state-cursor '((hbar . 2) "chocolate")
-          evil-visual-state-cursor '((hbar . 2) "gray")
-          evil-motion-state-cursor '(box "plum3"))))
-
 ;; NOTE Adjust these bitmaps if you change `doom-fringe-size'
 (after! flycheck
   ;; because git-gutter is in the left fringe

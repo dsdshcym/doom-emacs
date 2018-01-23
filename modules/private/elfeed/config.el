@@ -3,7 +3,7 @@
 (def-package! elfeed
   :commands elfeed
   :config
-  (add-hook 'org-store-link-functions #'+elfeed/org-elfeed-entry-store-link)
+  (org-link-set-parameters "elfeed" :store #'+elfeed/org-elfeed-entry-store-link)
   (map!
    (:map elfeed-search-mode-map
      :n "RET" #'elfeed-search-show-entry

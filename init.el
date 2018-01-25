@@ -51,7 +51,6 @@
        doom-modeline     ; a snazzy Atom-inspired mode-line
        doom-quit         ; DOOM quit-message prompts when you quit Emacs
        hl-todo           ; highlight TODO/FIXME/NOTE tags
-       unicode           ; extended unicode support for various languages
        (window-select +ace-window)  ; visually switch windows
 
        :tools

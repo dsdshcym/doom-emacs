@@ -435,6 +435,9 @@ character that looks like a space that `whitespace-mode' won't affect.")
         ;; Fallback to `doom-unicode-font' for Unicode characters
         (when (fontp doom-unicode-font)
           (set-fontset-font t 'unicode doom-unicode-font frame))
+        (when (fontp doom-cjk-font)
+          (dolist (charset '(kana han cjk-misc bopomofo))
+            (set-fontset-font (frame-parameter nil 'font) charset doom-cjk-font frame)))
         ;; ...and for variable-pitch-mode:
         (when (fontp doom-variable-pitch-font)
           (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font)))

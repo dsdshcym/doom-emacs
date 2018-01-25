@@ -7,3 +7,4 @@
 (setq doom-localleader-key "'")
 
 (setq doom-font (font-spec :family "Iosevka" :size 14))
+(setq doom-cjk-font (font-spec :family "PingFang SC"))

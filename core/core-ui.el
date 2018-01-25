@@ -61,6 +61,7 @@ with `doom//reload-theme').")
  use-dialog-box nil              ; always avoid GUI
  visible-cursor nil
  x-stretch-cursor nil
+ x-underline-at-descent-line t
  ;; defer jit font locking slightly to [try to] improve Emacs performance
  jit-lock-defer-time nil
  jit-lock-stealth-nice 0.1

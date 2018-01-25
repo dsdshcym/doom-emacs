@@ -1,5 +1,6 @@
 ;;; tools/macos/+emacs-mac-port.el -*- lexical-binding: t; -*-
 
+(setq mouse-highlight nil)
 (setq mac-pass-command-to-system nil)
 (mac-auto-operator-composition-mode t)
 

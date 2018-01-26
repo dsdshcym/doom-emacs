@@ -111,7 +111,10 @@
               magit-process-mode-map
               magit-blame-mode-map
               magit-log-mode-map)
-        doom-leader-key nil)
+        doom-leader-key nil))
 
+
+(def-package! git-rebase
+  :config
   (map! :map git-rebase-mode-map
         doom-leader-key nil))

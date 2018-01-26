@@ -17,7 +17,7 @@
 ;;             org-fontify-quote-and-verse-blocks nil
 ;;             org-fontify-whole-heading-line nil)))
 
-(setq doom-line-numbers-style 'relative)
+(setq doom-line-numbers-style 'visual)
 
 (def-package! solarized-theme
   :config

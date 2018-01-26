@@ -106,9 +106,12 @@
   :when (featurep! :feature evil)
   :after magit
   :config
-  (map! :map magit-mode-map
+  (map! :map (magit-status-mode-map
+              magit-diff-mode-map
+              magit-process-mode-map
+              magit-blame-mode-map
+              magit-log-mode-map)
         doom-leader-key nil)
 
   (map! :map git-rebase-mode-map
         doom-leader-key nil))
-

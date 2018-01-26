@@ -107,5 +107,8 @@
   :after magit
   :config
   (map! :map magit-mode-map
+        doom-leader-key nil)
+
+  (map! :map git-rebase-mode-map
         doom-leader-key nil))
 

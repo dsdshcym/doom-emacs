@@ -16,3 +16,8 @@
   :after avy
   :config
   (ace-pinyin-global-mode t))
+
+(def-package! evil-find-char-pinyin
+  :after evil
+  :config
+  (evil-find-char-pinyin-mode t))

@@ -4,3 +4,4 @@
 (package! fcitx)
 (package! pangu-spacing)
 (package! ace-pinyin)
+(package! evil-find-char-pinyin)

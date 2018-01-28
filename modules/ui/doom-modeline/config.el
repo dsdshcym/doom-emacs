@@ -606,9 +606,6 @@ Returns \"\" to not break --no-window-system."
 ;;
 
 (defun +doom-modeline|init ()
-  "Set the default modeline."
-  (doom-set-modeline 'main t)
-
   ;; These buffers are already created and don't get modelines. For the love of
   ;; Emacs, someone give the man a modeline!
   (dolist (bname '("*scratch*" "*Messages*"))
@@ -628,6 +625,8 @@ Returns \"\" to not break --no-window-system."
 ;;
 ;; Bootstrap
 ;;
+
+(doom-set-modeline 'main t)
 
 (add-hook 'doom-init-theme-hook #'+doom-modeline|init)
 (add-hook 'doom-scratch-buffer-hook #'+doom-modeline|set-special-modeline)

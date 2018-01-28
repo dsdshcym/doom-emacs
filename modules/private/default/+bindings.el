@@ -215,7 +215,7 @@
           :desc "Toggle profiler"       :n  "p" #'doom/toggle-profiler)
 
         (:desc "insert" :prefix "i"
-          :desc "From kill-ring"        :nv "y" #'counsel-yank-pop
+          :desc "From kill-ring"        :nv "y" #'yank-pop
           :desc "From snippet"          :nv "s" #'yas-insert-snippet)
 
         (:desc "notes" :prefix "n"
@@ -231,6 +231,7 @@
           :desc "REPL"                  :n  "r" #'+eval/open-repl
                                         :v  "r" #'+eval:repl
           :desc "Neotree"               :n  "n" #'+neotree/toggle
+          :desc "Imenu sidebar"         :nv "i" #'imenu-list-minor-mode
           :desc "Terminal"              :n  "t" #'+term/open-popup
           :desc "Terminal in project"   :n  "T" #'+term/open-popup-in-project
 

@@ -3,3 +3,4 @@
 
 (package! fcitx)
 (package! pangu-spacing)
+(package! ace-pinyin)

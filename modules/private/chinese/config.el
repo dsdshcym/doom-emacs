@@ -11,3 +11,8 @@
   (global-pangu-spacing-mode 1)
   :config
   (setq pangu-spacing-real-insert-separtor t))
+
+(def-package! ace-pinyin
+  :after avy
+  :config
+  (ace-pinyin-global-mode t))

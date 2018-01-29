@@ -174,6 +174,7 @@
    (:desc "project" :prefix "p"
      :desc "Find file in project"      :nmvo  "f" #'projectile-find-file
      :desc "Run cmd in project root"   :nmvo  "!" #'projectile-run-shell-command-in-root
+     :desc "Run async cmd in root"     :nmvo  "&" #'projectile-run-async-shell-command-in-root
      :desc "Switch project"            :nmvo  "p" #'projectile-switch-project
      :desc "Recent project files"      :nmvo  "r" #'projectile-recentf
      :desc "List project tasks"        :nmvo  "t" #'+ivy/tasks

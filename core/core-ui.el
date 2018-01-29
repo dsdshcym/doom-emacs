@@ -224,7 +224,6 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 
 ;; Highlights the current line
 (def-package! hl-line ; built-in
-  :hook ((prog-mode text-mode conf-mode) . hl-line-mode)
   :config
   ;; I don't need hl-line showing in other windows. This also offers a small
   ;; speed boost when buffer is displayed in multiple windows.

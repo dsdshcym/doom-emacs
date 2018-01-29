@@ -116,7 +116,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 (def-package! counsel-projectile
   :commands (counsel-projectile-find-file counsel-projectile-find-dir counsel-projectile-switch-to-buffer
-             counsel-projectile-grep counsel-projectile-ag counsel-projectile-switch-project)
+             counsel-projectile-grep counsel-projectile-ag counsel-projectile-rg counsel-projectile-switch-project)
   :init
   (map! [remap projectile-find-file]        #'counsel-projectile-find-file
         [remap projectile-find-dir]         #'counsel-projectile-find-dir

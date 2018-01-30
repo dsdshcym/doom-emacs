@@ -446,6 +446,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
        (lwarn 'doom-ui :error
               "Unexpected error while initializing fonts: %s"
               (error-message-string ex))))))
+(add-hook! 'after-make-frame-functions #'doom|init-font)
 
 (defun doom|init-theme (&optional frame)
   "Set the theme and load the font, in that order."
@@ -453,23 +454,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
     (load-theme doom-theme t))
   (doom|init-font frame)
   (run-hooks 'doom-init-theme-hook))
-
-;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
-;; daemon Emacs is hairy.
-;;
-;; + Running `doom|init-theme' directly sorts out the initial GUI frame.
-;; + Attaching it to `after-make-frame-functions' sorts out daemon Emacs.
-;; + Waiting for 0.1s in `doom|reload-ui-in-daemon' fixes daemon Emacs started
-;;   with `server-start' in an interactive session of Emacs AND in tty Emacs.
 (add-hook 'doom-init-ui-hook #'doom|init-theme)
-
-(defun doom|reload-ui-in-daemon (frame)
-  "Reload the theme (and font) in an daemon frame."
-  (when (or (daemonp) (not (display-graphic-p)))
-    (with-selected-frame frame
-      (run-with-timer 0.1 nil #'doom|init-ui))))
-(add-hook! 'after-make-frame-functions #'(doom|init-theme doom|reload-ui-in-daemon))
-
 
 ;;
 ;; Bootstrap

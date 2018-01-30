@@ -423,10 +423,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;; Theme & font
 ;;
 
-(defun doom|init-theme (&optional frame)
-  "Set the theme and load the font, in that order."
-  (when doom-theme
-    (load-theme doom-theme t))
+(defun doom|init-font (&optional frame)
   (condition-case-unless-debug ex
       (when (display-graphic-p)
         (when (fontp doom-font)
@@ -448,8 +445,13 @@ character that looks like a space that `whitespace-mode' won't affect.")
                 (font-get (caddr ex) :family))
        (lwarn 'doom-ui :error
               "Unexpected error while initializing fonts: %s"
-              (error-message-string ex)))))
+              (error-message-string ex))))))
 
+(defun doom|init-theme (&optional frame)
+  "Set the theme and load the font, in that order."
+  (when doom-theme
+    (load-theme doom-theme t))
+  (doom|init-font frame)
   (run-hooks 'doom-init-theme-hook))
 
 ;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and

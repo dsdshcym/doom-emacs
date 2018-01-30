@@ -17,7 +17,8 @@
 ;;             org-fontify-quote-and-verse-blocks nil
 ;;             org-fontify-whole-heading-line nil)))
 
-(setq doom-line-numbers-style 'visual)
+(setq doom-line-numbers-style 'visual
+      doom-line-numbers-visual-style t)
 
 (def-package! solarized-theme
   :config

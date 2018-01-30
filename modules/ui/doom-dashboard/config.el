@@ -302,4 +302,4 @@ controlled by `+doom-dashboard-pwd-policy'."
              (call-interactively (or (command-remapping #'bookmark-jump)
                                      #'bookmark-jump)))
             ("Edit emacs.d" "tools"
-             (call-interactively #'+default/find-in-emacsd))))))
+             (doom-project-find-file doom-emacs-dir))))))

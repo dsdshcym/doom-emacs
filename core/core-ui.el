@@ -36,6 +36,9 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
   "List of hooks to run when the theme (and font) is initialized (or reloaded
 with `doom//reload-theme').")
 
+;; Prevents the unstyled mode-line flash at startup
+(set-buffer "*scratch*")
+(setq mode-line-format nil)
 
 (setq-default
  bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
@@ -306,7 +309,7 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; The native border "consumes" a pixel of the fringe on righter-most splits,
 ;; `window-divider' does not. Available since Emacs 25.1.
 (setq-default window-divider-default-places t
-              window-divider-default-bottom-width 0
+              window-divider-default-bottom-width 1
               window-divider-default-right-width 1)
 (add-hook 'doom-init-ui-hook #'window-divider-mode)
 
@@ -316,13 +319,22 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;;
 
 (defvar doom-line-numbers-style t
-  "The style to use for the line number display.
+  "The default styles to use for the line number display. Accepts one of the
+following:
 
-Accepts the same arguments as `display-line-numbers', which are:
+  nil         No line numbers
+  t           Ordinary line numbers
+  'relative   Relative line numbers
 
-nil         No line numbers
-t           Ordinary line numbers
-'relative   Relative line numbers")
+Use `doom/toggle-line-numbers' to cycle between these line number styles.")
+
+(when (boundp 'display-line-numbers)
+  (defvar doom-line-numbers-visual-style nil
+    "If non-nil, relative line numbers will be countered by screen line, rather
+than buffer line. Setting this to non-nil is the equivalent of using 'visual in
+`display-line-numbers'.
+
+It has no effect on nlinum."))
 
 (defun doom|enable-line-numbers (&optional arg)
   "Enables the display of line numbers, using `display-line-numbers' (in Emacs
@@ -330,13 +342,9 @@ t           Ordinary line numbers
 
 See `doom-line-numbers-style' to control the style of line numbers to display."
   (cond ((boundp 'display-line-numbers)
-         (setq display-line-numbers
-               (pcase arg
-                 (+1 doom-line-numbers-style)
-                 (-1 nil)
-                 (_ doom-line-numbers-style))))
+         (setq display-line-numbers (unless (eq arg -1) doom-line-numbers-style)))
         ((eq doom-line-numbers-style 'relative)
-         (if (= arg -1)
+         (if (eq arg -1)
              (nlinum-relative-off)
            (nlinum-relative-on)))
         ((not (null doom-line-numbers-style))
@@ -416,6 +424,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
   :unless (boundp 'display-line-numbers)
   :commands nlinum-relative-mode
   :config
+  (setq nlinum-format " %d ")
   (after! evil (nlinum-relative-setup-evil)))
 
 

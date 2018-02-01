@@ -1,5 +1,10 @@
 ;;; private/default/+bindings.el -*- lexical-binding: t; -*-
 
+;; expand-region's prompt can't tell what key contract-region is bound to, so we
+;; tell it explicitly.
+(setq expand-region-contract-fast-key "V")
+
+
 ;; This files defines a Spacemacs-esque keybinding scheme
 
 (map! [remap evil-jump-to-tag] #'projectile-find-tag
@@ -319,12 +324,14 @@
       :nv "C-a" #'evil-numbers/inc-at-pt
       :nv "C-x" #'evil-numbers/dec-at-pt
 
+
       ;; --- Plugin bindings ------------------------------
       ;; auto-yasnippet
       :i  [C-tab] #'aya-expand
       :nv [C-tab] #'aya-create
 
       ;; company-mode (vim-like omnicompletion)
+      :i "C-@"    #'+company/complete
       :i "C-SPC"  #'+company/complete
       (:prefix "C-x"
         :i "C-l"   #'+company/whole-lines
@@ -606,6 +613,11 @@
       :nv "K"  #'smart-up
       :m  "g]" #'smart-forward
       :m  "g[" #'smart-backward
+
+      ;; swiper
+      (:after swiper
+        (:map swiper-map
+          [backtab]  #'+ivy/wgrep-occur))
 
       ;; undo-tree -- undo/redo for visual regions
       :v "C-u" #'undo-tree-undo

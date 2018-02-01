@@ -36,10 +36,6 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
   "List of hooks to run when the theme (and font) is initialized (or reloaded
 with `doom//reload-theme').")
 
-;; Prevents the unstyled mode-line flash at startup
-(set-buffer "*scratch*")
-(setq mode-line-format nil)
-
 (setq-default
  bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
  blink-matching-paren nil    ; don't blink--too distracting
@@ -422,7 +418,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
 
 (def-package! nlinum-relative
   :unless (boundp 'display-line-numbers)
-  :commands nlinum-relative-mode
+  :commands (nlinum-relative-mode nlinum-relative-on nlinum-relative-off)
   :config
   (setq nlinum-format " %d ")
   (after! evil (nlinum-relative-setup-evil)))
@@ -459,11 +455,28 @@ character that looks like a space that `whitespace-mode' won't affect.")
 
 (defun doom|init-theme (&optional frame)
   "Set the theme and load the font, in that order."
-  (when doom-theme
-    (load-theme doom-theme t))
-  (doom|init-font frame)
-  (run-hooks 'doom-init-theme-hook))
+  (with-selected-frame (or frame (selected-frame))
+    (when doom-theme
+      (load-theme doom-theme t))
+    (doom|init-font frame)
+    (run-hooks 'doom-init-theme-hook)
+    (when frame
+      (remove-hook 'after-make-frame-functions #'doom|init-theme))))
 (add-hook 'doom-init-ui-hook #'doom|init-theme)
+
+;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
+;; daemon Emacs is hairy. Running `doom|init-theme' sorts out the initial GUI
+;; frame.
+;;
+;; `doom|init-theme-in-frame' sorts out daemon and emacsclient frames by
+;; reloading the theme in those frame. However, if you open simultaneous
+;; terminal and gui frames with emacsclient, you will get issues! There's always
+;; `doom//reload-theme' if you need it.
+(defun doom|reload-ui-in-daemon (frame)
+  "Reloads the theme in new daemon or tty frames."
+  (when (or (daemonp) (not (display-graphic-p)))
+    (doom|init-theme frame)))
+(add-hook 'after-make-frame-functions #'doom|reload-ui-in-daemon)
 
 ;;
 ;; Bootstrap

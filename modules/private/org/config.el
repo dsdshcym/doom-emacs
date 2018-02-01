@@ -13,7 +13,6 @@
         org-imenu-depth 9
         org-todo-keywords
         '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!/!)")
-          (sequence "READING(r)" "TOREVIEW(v!/!)" "|" "READ(R!/!)")
           (sequence "PENDING(p)" "|" "MERGED(m!/!)" "CANCELLED(c@/!)")
           (sequence "WAITING(w@/!)" "SOMEDAY(s@/!)" "|" "CANCELLED(c@/!)")))
   (setq org-return-follows-link t)

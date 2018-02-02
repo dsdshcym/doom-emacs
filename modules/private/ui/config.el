@@ -4,7 +4,6 @@
 (remove-hook 'doom-init-ui-hook #'blink-cursor-mode)
 (blink-cursor-mode -1)
 (setq frame-resize-pixelwise t)
-(setq-default frame-title-format "%b")
 
 ;; (after! doom-themes-org
 ;;   (remove-hook 'org-font-lock-set-keywords-hook #'doom-org-custom-fontification))

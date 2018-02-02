@@ -8,7 +8,9 @@
 tested.
 
 Should any of its function returns non-nil, the rest of the functions are
-ignored and the buffer is considered real.")
+ignored and the buffer is considered real.
+
+See `doom-real-buffer-p' for more information.")
 
 ;;;###autoload
 (defvar doom-unreal-buffer-functions
@@ -18,14 +20,17 @@ unlike `doom-real-buffer-functions'. They are passed one argument: the buffer to
 be tested.
 
 Should any of these functions return non-nil, the rest of the functions are
-ignored and the buffer is considered unreal.")
+ignored and the buffer is considered unreal.
+
+See `doom-real-buffer-p' for more information.")
 
 ;;;###autoload
 (defvar-local doom-real-buffer-p nil
-  "If non-nil, this buffer should be considered real no matter what.")
+  "If non-nil, this buffer should be considered real no matter what. See
+`doom-real-buffer-p' for more information.")
 
 ;;;###autoload
-(defvar doom-fallback-buffer "*scratch*"
+(defvar doom-fallback-buffer-name "*scratch*"
   "The name of the buffer to fall back to if no other buffers exist (will create
 it if it doesn't exist).")
 
@@ -35,10 +40,17 @@ it if it doesn't exist).")
 ;;
 
 ;;;###autoload
+(defun doom-buffer-frame-predicate (buf)
+  "To be used as the default frame buffer-predicate parameter. Returns nil if
+BUF should be skipped over by functions like `next-buffer' and `other-buffer'."
+  (or (doom-real-buffer-p buf)
+      (eq buf (doom-fallback-buffer))))
+
+;;;###autoload
 (defun doom-fallback-buffer ()
   "Returns the fallback buffer, creating it if necessary. By default this is the
-scratch buffer."
-  (get-buffer-create doom-fallback-buffer))
+scratch buffer. See `doom-fallback-buffer-name' to change this."
+  (get-buffer-create doom-fallback-buffer-name))
 
 ;;;###autoload
 (defalias 'doom-buffer-list #'buffer-list)
@@ -77,8 +89,14 @@ If no project is active, return all buffers."
 
 ;;;###autoload
 (defun doom-real-buffer-p (&optional buffer-or-name)
-  "Returns t if BUFFER-OR-NAME is a 'real' buffer. The criteria for a real
-buffer is:
+  "Returns t if BUFFER-OR-NAME is a 'real' buffer.
+
+A real buffer is a useful buffer; a first class citizen in Doom. Real ones
+should get special treatment, because we will be spending most of our time in
+them. Unreal ones should be low-profile and easy to cast aside, so we can focus
+on real ones.
+
+The exact criteria for a real buffer is:
 
   1. A non-nil value for the buffer-local value of the `doom-real-buffer-p'
      variable OR
@@ -279,17 +297,3 @@ processes killed."
           (delete-process p)
           (cl-incf n))))
     n))
-
-;;;###autoload
-(defun doom/next-buffer ()
-  "Switch to the next real buffer, skipping non-real buffers. See
-`doom-real-buffer-p' for what 'real' means."
-  (interactive)
-  (doom--cycle-real-buffers +1))
-
-;;;###autoload
-(defun doom/previous-buffer ()
-  "Switch to the previous real buffer, skipping non-real buffers. See
-`doom-real-buffer-p' for what 'real' means."
-  (interactive)
-  (doom--cycle-real-buffers -1))

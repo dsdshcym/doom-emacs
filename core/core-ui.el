@@ -309,6 +309,11 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
               window-divider-default-right-width 1)
 (add-hook 'doom-init-ui-hook #'window-divider-mode)
 
+;; remove prompt if the file is opened in other clients
+(defun server-remove-kill-buffer-hook ()
+  (remove-hook 'kill-buffer-query-functions 'server-kill-buffer-query-function))
+(add-hook 'server-visit-hook 'server-remove-kill-buffer-hook)
+
 
 ;;
 ;; Line numbers
@@ -485,7 +490,9 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;; auto-enabled in Emacs 25+; I'll do it myself
 (global-eldoc-mode -1)
 ;; simple name in frame title
-(setq-default frame-title-format '("DOOM Emacs"))
+(setq frame-title-format '("%b – Doom Emacs"))
+;; make `next-buffer', `other-buffer', etc. ignore unreal buffers
+(push '(buffer-predicate . doom-buffer-frame-predicate) default-frame-alist)
 ;; draw me like one of your French editors
 (tooltip-mode -1) ; relegate tooltips to echo area only
 (menu-bar-mode -1)
@@ -543,9 +550,8 @@ instead)."
   (let ((buf (current-buffer)))
     (cond ((window-dedicated-p)
            (delete-window))
-          ((eq buf (doom-fallback-buffer))
-           (doom--cycle-real-buffers -1))
           ((doom-real-buffer-p buf)
+           (previous-buffer)
            (doom--cycle-real-buffers
             (if (delq buf (doom-real-buffer-list)) -1))
            (kill-buffer buf))

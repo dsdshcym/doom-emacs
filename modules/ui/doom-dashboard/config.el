@@ -44,7 +44,7 @@ Possible values:
 ;; Bootstrap
 ;;
 
-(setq doom-fallback-buffer +doom-dashboard-name
+(setq doom-fallback-buffer-name +doom-dashboard-name
       initial-buffer-choice #'+doom-dashboard-initial-buffer)
 
 (add-hook 'window-setup-hook #'+doom-dashboard|init)
@@ -58,8 +58,6 @@ Possible values:
   (format "DOOM v%s" doom-version)
   "Major mode for the DOOM dashboard buffer."
   (read-only-mode +1)
-  (when (featurep 'evil)
-    (evil-emacs-state))
   (setq truncate-lines t)
   (setq-local whitespace-style nil)
   (setq-local show-trailing-whitespace nil)
@@ -72,6 +70,11 @@ Possible values:
       "p" #'+doom-dashboard/previous-button
       "N" #'+doom-dashboard/last-button
       "P" #'+doom-dashboard/first-button
+      [remap evil-insert]  #'ignore
+      [remap evil-replace] #'ignore
+      [remap evil-change]  #'ignore
+      [remap evil-visual-char]  #'ignore
+      [remap evil-visual-line]  #'ignore
       (:when (featurep! :feature evil)
         :em "j" #'+doom-dashboard/next-button
         :em "k" #'+doom-dashboard/previous-button
@@ -162,14 +165,14 @@ project (which may be different across perspective)."
 (defun +doom-dashboard-update-pwd (&optional pwd)
   "Update `default-directory' in the Doom dashboard buffer. What it is set to is
 controlled by `+doom-dashboard-pwd-policy'."
-  (with-current-buffer (doom-fallback-buffer)
-    (if pwd
-        (setq-local default-directory pwd)
-      (let ((new-pwd (+doom-dashboard--get-pwd)))
-        (when (and new-pwd (file-directory-p new-pwd))
-          (unless (string-suffix-p "/" new-pwd)
-            (setq new-pwd (concat new-pwd "/")))
-          (setq-local default-directory new-pwd))))))
+  (if pwd
+      (with-current-buffer (doom-fallback-buffer)
+        (setq-local default-directory pwd))
+    (let ((new-pwd (+doom-dashboard--get-pwd)))
+      (when (and new-pwd (file-directory-p new-pwd))
+        (unless (string-suffix-p "/" new-pwd)
+          (setq new-pwd (concat new-pwd "/")))
+        (+doom-dashboard-update-pwd new-pwd)))))
 
 (defun +doom-dashboard-reload (&optional force)
   "Update the DOOM scratch buffer (or create it, if it doesn't exist)."

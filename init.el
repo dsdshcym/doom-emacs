@@ -30,7 +30,9 @@
 (require 'core (concat user-emacs-directory "core/core"))
 
 (doom! :feature
-       popup
+       (popup
+        +all
+        +defaults)
       ;debugger          ; FIXME stepping through code, to help you add bugs
        eval              ; run code, run (also, repls)
        evil              ; come to the dark side, we have cookies

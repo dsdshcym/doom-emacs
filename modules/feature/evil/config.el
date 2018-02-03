@@ -37,7 +37,13 @@
         ;; more vim-like behavior
         evil-symbol-word-search t
         ;; don't activate mark on shift-click
-        shift-select-mode nil)
+        shift-select-mode nil
+        ;; cursor appearance
+        evil-default-cursor '+evil-default-cursor
+        evil-normal-state-cursor 'box
+        evil-emacs-state-cursor  '(box +evil-emacs-cursor)
+        evil-insert-state-cursor 'bar
+        evil-visual-state-cursor 'hollow)
 
   (add-hook 'doom-init-hook #'evil-mode)
   :config
@@ -45,15 +51,14 @@
   (set! :popup "^\\*evil-registers" '((size . 0.3)))
   (set! :popup "^\\*Command Line" '((size . 8)))
 
-  ;; Set cursor colors later, once theme is loaded
-  (defun +evil*init-cursors (&rest _)
-    (setq evil-normal-state-cursor '(box "DarkGoldenrod2")
-          evil-insert-state-cursor '((bar . 2) "chartreuse3")
-          evil-emacs-state-cursor '(box "SkyBlue2")
-          evil-replace-state-cursor '((hbar . 2) "chocolate")
-          evil-visual-state-cursor '((hbar . 2) "gray")
-          evil-motion-state-cursor '(box "plum3")))
-  (advice-add #'load-theme :after #'+evil*init-cursors)
+  ;; Change the cursor color in emacs mode
+  (defvar +evil--default-cursor-color "#ffffff")
+  (defun +evil-default-cursor () (set-cursor-color +evil--default-cursor-color))
+  (defun +evil-emacs-cursor ()   (set-cursor-color (face-foreground 'warning)))
+
+  (defun +evil|update-cursor-color ()
+    (setq +evil--default-cursor-color (face-background 'cursor)))
+  (add-hook 'doom-init-theme-hook #'+evil|update-cursor-color)
 
   ;; default modes
   (dolist (mode '(tabulated-list-mode view-mode comint-mode term-mode calendar-mode Man-mode))
@@ -95,8 +100,8 @@
   (add-hook 'after-save-hook #'+evil|save-buffer)
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'doom/escape)
-  ;; Ensure buffer is in normal mode when we leave it and return to it.
-  (advice-add #'windmove-do-window-select :around #'+evil*restore-normal-state-on-windmove)
+  ;; Ensure buffer is in initial mode when we leave it and return to it.
+  (advice-add #'windmove-do-window-select :around #'+evil*restore-initial-state-on-windmove)
   ;; Don't move cursor when indenting
   (advice-add #'evil-indent :around #'+evil*static-reindent)
   ;; monkey patch `evil-ex-replace-special-filenames' to add more ex

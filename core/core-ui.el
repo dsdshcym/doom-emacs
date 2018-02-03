@@ -433,55 +433,58 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;; Theme & font
 ;;
 
-(defun doom|init-font (&optional frame)
-  (condition-case-unless-debug ex
-      (when (display-graphic-p)
-        (when (fontp doom-font)
-          (set-frame-font doom-font nil (if frame (list frame) t))
-          (set-face-attribute 'fixed-pitch frame :font doom-font))
-        ;; Fallback to `doom-unicode-font' for Unicode characters
-        (when (fontp doom-unicode-font)
-          (set-fontset-font t 'unicode doom-unicode-font frame))
-        (when (fontp doom-cjk-font)
-          (dolist (charset '(kana han cjk-misc bopomofo))
-            (set-fontset-font (frame-parameter nil 'font) charset doom-cjk-font frame)))
-        ;; ...and for variable-pitch-mode:
-        (when (fontp doom-variable-pitch-font)
-          (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font)))
-    ('error
-     (if (string-prefix-p "Font not available: " (error-message-string ex))
-         (lwarn 'doom-ui :warning
-                "Could not find the '%s' font on your system, falling back to system font"
-                (font-get (caddr ex) :family))
-       (lwarn 'doom-ui :error
-              "Unexpected error while initializing fonts: %s"
-              (error-message-string ex))))))
-(add-hook! 'after-make-frame-functions #'doom|init-font)
-
 (defun doom|init-theme (&optional frame)
   "Set the theme and load the font, in that order."
   (with-selected-frame (or frame (selected-frame))
-    (when doom-theme
+    (when (and (not (daemonp)) (symbolp doom-theme))
       (load-theme doom-theme t))
-    (doom|init-font frame)
-    (run-hooks 'doom-init-theme-hook)
-    (when frame
-      (remove-hook 'after-make-frame-functions #'doom|init-theme))))
-(add-hook 'doom-init-ui-hook #'doom|init-theme)
+    (add-hook 'after-make-frame-functions #'doom|init-theme-in-daemon)
+    (run-hooks 'doom-init-theme-hook)))
+
+(defun doom|init-fonts (&optional frame)
+  "Initialize fonts."
+  (add-hook 'after-make-frame-functions #'doom|init-fonts)
+  (if (not frame)
+      (when (fontp doom-font)
+        (map-put default-frame-alist 'font (font-xlfd-name doom-font)))
+    (when (display-graphic-p)
+      (or frame (setq frame (selected-frame)))
+      (condition-case-unless-debug ex
+          (progn
+            (when (fontp doom-font)
+              (set-face-attribute 'fixed-pitch frame :font doom-font))
+            ;; Fallback to `doom-unicode-font' for Unicode characters
+            (when (fontp doom-unicode-font)
+              (set-fontset-font t 'unicode doom-unicode-font frame))
+            (when (fontp doom-cjk-font)
+              (dolist (charset '(kana han cjk-misc bopomofo))
+                (set-fontset-font (frame-parameter nil 'font) charset doom-cjk-font frame)))
+            ;; ...and for variable-pitch-mode:
+            (when (fontp doom-variable-pitch-font)
+              (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font)))
+        ('error
+         (if (string-prefix-p "Font not available: " (error-message-string ex))
+             (lwarn 'doom-ui :warning
+                    "Could not find the '%s' font on your system, falling back to system font"
+                    (font-get (caddr ex) :family))
+           (lwarn 'doom-ui :error
+                  "Unexpected error while initializing fonts: %s"
+                  (error-message-string ex))))))))
 
 ;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
-;; daemon Emacs is hairy. Running `doom|init-theme' sorts out the initial GUI
-;; frame.
+;; daemon Emacs is hairy. `doom|init-theme' sorts out the initial GUI frame.
+;; Attaching that hook to `after-make-frame-functions' sorts out daemon and
+;; emacsclient frames.
 ;;
-;; `doom|init-theme-in-frame' sorts out daemon and emacsclient frames by
-;; reloading the theme in those frame. However, if you open simultaneous
-;; terminal and gui frames with emacsclient, you will get issues! There's always
-;; `doom//reload-theme' if you need it.
-(defun doom|reload-ui-in-daemon (frame)
+;; There will still be issues with simultaneous gui and terminal (emacsclient)
+;; frames, however. There's always `doom//reload-theme' if you need it!
+(defun doom|init-theme-in-daemon (frame)
   "Reloads the theme in new daemon or tty frames."
   (when (or (daemonp) (not (display-graphic-p)))
-    (doom|init-theme frame)))
-(add-hook 'after-make-frame-functions #'doom|reload-ui-in-daemon)
+    (doom|init-theme frame)
+    (remove-hook 'after-make-frame-functions #'doom|init-theme-in-daemon)))
+
+(add-hook! 'doom-init-ui-hook #'(doom|init-theme doom|init-fonts))
 
 ;;
 ;; Bootstrap
@@ -545,16 +548,20 @@ instead)."
   (not (eq (current-buffer) (doom-fallback-buffer))))
 
 (defun doom*switch-to-fallback-buffer-maybe (orig-fn)
-  "Advice for `kill-this-buffer'. If there are no real buffers left, switch to
-`doom-fallback-buffer'."
+  "Advice for `kill-this-buffer'. If in a dedicated window, delete it. If there
+are no real buffers left, switch to `doom-fallback-buffer'. Otherwise, delegate
+to original `kill-this-buffer'."
   (let ((buf (current-buffer)))
     (cond ((window-dedicated-p)
            (delete-window))
           ((doom-real-buffer-p buf)
-           (previous-buffer)
-           (doom--cycle-real-buffers
-            (if (delq buf (doom-real-buffer-list)) -1))
-           (kill-buffer buf))
+           (or (kill-buffer buf)
+               (previous-buffer))
+           ;; if there are no (real) buffers left to switch to, land on the
+           ;; fallback buffer.
+           (unless (cl-set-difference (doom-real-buffer-list)
+                                      (doom-visible-buffers))
+             (switch-to-buffer (doom-fallback-buffer))))
           (t
            (funcall orig-fn)))))
 
@@ -565,7 +572,7 @@ instead)."
   (advice-add #'kill-this-buffer :around #'doom*switch-to-fallback-buffer-maybe)
   ;; Don't kill the fallback buffer
   (add-hook 'kill-buffer-query-functions #'doom|protect-fallback-buffer)
-  ;; Don't kill buffers that are visible else, only bury them
+  ;; Don't kill buffers that are visible in another window, only bury them
   (add-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers)
   ;; Renames major-modes [pedantry intensifies]
   (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)

@@ -443,33 +443,29 @@ character that looks like a space that `whitespace-mode' won't affect.")
 
 (defun doom|init-fonts (&optional frame)
   "Initialize fonts."
-  (add-hook 'after-make-frame-functions #'doom|init-fonts)
-  (if (not frame)
-      (when (fontp doom-font)
-        (map-put default-frame-alist 'font (font-xlfd-name doom-font)))
-    (when (display-graphic-p)
-      (or frame (setq frame (selected-frame)))
-      (condition-case-unless-debug ex
-          (progn
-            (when (fontp doom-font)
-              (set-face-attribute 'fixed-pitch frame :font doom-font))
-            ;; Fallback to `doom-unicode-font' for Unicode characters
-            (when (fontp doom-unicode-font)
-              (set-fontset-font t 'unicode doom-unicode-font frame))
-            (when (fontp doom-cjk-font)
-              (dolist (charset '(kana han cjk-misc bopomofo))
-                (set-fontset-font (frame-parameter nil 'font) charset doom-cjk-font frame)))
-            ;; ...and for variable-pitch-mode:
-            (when (fontp doom-variable-pitch-font)
-              (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font)))
-        ('error
-         (if (string-prefix-p "Font not available: " (error-message-string ex))
-             (lwarn 'doom-ui :warning
-                    "Could not find the '%s' font on your system, falling back to system font"
-                    (font-get (caddr ex) :family))
-           (lwarn 'doom-ui :error
-                  "Unexpected error while initializing fonts: %s"
-                  (error-message-string ex))))))))
+  (add-hook! 'after-make-frame-functions #'doom|init-fonts)
+  (condition-case-unless-debug ex
+      (when (display-graphic-p)
+        (when (fontp doom-font)
+          (set-frame-font doom-font nil (if frame (list frame) t))
+          (set-face-attribute 'fixed-pitch frame :font doom-font))
+        ;; Fallback to `doom-unicode-font' for Unicode characters
+        (when (fontp doom-unicode-font)
+          (set-fontset-font t 'unicode doom-unicode-font frame))
+        (when (fontp doom-cjk-font)
+          (dolist (charset '(kana han cjk-misc bopomofo))
+            (set-fontset-font (frame-parameter nil 'font) charset doom-cjk-font frame)))
+        ;; ...and for variable-pitch-mode:
+        (when (fontp doom-variable-pitch-font)
+          (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font)))
+    ('error
+     (if (string-prefix-p "Font not available: " (error-message-string ex))
+         (lwarn 'doom-ui :warning
+                "Could not find the '%s' font on your system, falling back to system font"
+                (font-get (caddr ex) :family))
+       (lwarn 'doom-ui :error
+              "Unexpected error while initializing fonts: %s"
+              (error-message-string ex))))))
 
 ;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
 ;; daemon Emacs is hairy. `doom|init-theme' sorts out the initial GUI frame.

@@ -19,6 +19,14 @@
 (setq doom-line-numbers-style 'visual
       doom-line-numbers-visual-style t)
 
+(after! evil
+  (setq evil-normal-state-cursor '(box "DarkGoldenrod2")
+        evil-insert-state-cursor '((bar . 2) "chartreuse3")
+        evil-emacs-state-cursor '(box "SkyBlue2")
+        evil-replace-state-cursor '((hbar . 2) "chocolate")
+        evil-visual-state-cursor '((hbar . 2) "gray")
+        evil-motion-state-cursor '(box "plum3")))
+
 (def-package! solarized-theme
   :config
   (setq solarized-use-variable-pitch nil)

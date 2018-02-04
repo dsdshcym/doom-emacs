@@ -433,19 +433,18 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;; Theme & font
 ;;
 
-(defun doom|init-theme (&optional frame)
+(defun doom|init-theme ()
   "Set the theme and load the font, in that order."
-  (with-selected-frame (or frame (selected-frame))
-    (when (and (not (daemonp)) (symbolp doom-theme))
-      (load-theme doom-theme t))
-    (add-hook 'after-make-frame-functions #'doom|init-theme-in-daemon)
-    (run-hooks 'doom-init-theme-hook)))
+  (when doom-theme
+    (load-theme doom-theme t))
+  (add-hook 'after-make-frame-functions #'doom|init-theme-in-frame)
+  (run-hooks 'doom-init-theme-hook))
 
 (defun doom|init-fonts (&optional frame)
   "Initialize fonts."
-  (add-hook! 'after-make-frame-functions #'doom|init-fonts)
+  (add-hook 'after-make-frame-functions #'doom|init-fonts)
   (condition-case-unless-debug ex
-      (when (display-graphic-p)
+      (progn
         (when (fontp doom-font)
           (set-frame-font doom-font nil (if frame (list frame) t))
           (set-face-attribute 'fixed-pitch frame :font doom-font))
@@ -469,16 +468,16 @@ character that looks like a space that `whitespace-mode' won't affect.")
 
 ;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
 ;; daemon Emacs is hairy. `doom|init-theme' sorts out the initial GUI frame.
-;; Attaching that hook to `after-make-frame-functions' sorts out daemon and
-;; emacsclient frames.
+;; Attaching `doom|init-theme-in-frame' to `after-make-frame-functions' sorts
+;; out daemon and emacsclient frames.
 ;;
 ;; There will still be issues with simultaneous gui and terminal (emacsclient)
 ;; frames, however. There's always `doom//reload-theme' if you need it!
-(defun doom|init-theme-in-daemon (frame)
+(defun doom|init-theme-in-frame (frame)
   "Reloads the theme in new daemon or tty frames."
   (when (or (daemonp) (not (display-graphic-p)))
-    (doom|init-theme frame)
-    (remove-hook 'after-make-frame-functions #'doom|init-theme-in-daemon)))
+    (with-selected-frame frame
+      (doom|init-theme))))
 
 (add-hook! 'doom-init-ui-hook #'(doom|init-theme doom|init-fonts))
 
@@ -491,7 +490,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;; simple name in frame title
 (setq frame-title-format '("%b – Doom Emacs"))
 ;; make `next-buffer', `other-buffer', etc. ignore unreal buffers
-(push '(buffer-predicate . doom-buffer-frame-predicate) default-frame-alist)
+(map-put default-frame-alist 'buffer-predicate #'doom-buffer-frame-predicate)
 ;; draw me like one of your French editors
 (tooltip-mode -1) ; relegate tooltips to echo area only
 (menu-bar-mode -1)
@@ -545,19 +544,24 @@ instead)."
 
 (defun doom*switch-to-fallback-buffer-maybe (orig-fn)
   "Advice for `kill-this-buffer'. If in a dedicated window, delete it. If there
-are no real buffers left, switch to `doom-fallback-buffer'. Otherwise, delegate
-to original `kill-this-buffer'."
+are no real buffers left OR if all remaining buffers are visible in other
+windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
+`kill-this-buffer'."
   (let ((buf (current-buffer)))
     (cond ((window-dedicated-p)
            (delete-window))
+          ((eq buf (doom-fallback-buffer))
+           (message "Can't kill the fallback buffer."))
           ((doom-real-buffer-p buf)
-           (or (kill-buffer buf)
-               (previous-buffer))
-           ;; if there are no (real) buffers left to switch to, land on the
-           ;; fallback buffer.
-           (unless (cl-set-difference (doom-real-buffer-list)
-                                      (doom-visible-buffers))
-             (switch-to-buffer (doom-fallback-buffer))))
+           (when (or ;; if there aren't more real buffers than visible buffers,
+                     ;; then there are no real, non-visible buffers left.
+                     (not (cl-set-difference (doom-real-buffer-list)
+                                             (doom-visible-buffers)))
+                     ;; if we end up back where we start (or previous-buffer
+                     ;; returns nil), we have nowhere left to go
+                     (memq (previous-buffer) (list buf 'nil)))
+             (switch-to-buffer (doom-fallback-buffer)))
+           (kill-buffer buf))
           (t
            (funcall orig-fn)))))
 

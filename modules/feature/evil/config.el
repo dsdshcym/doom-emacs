@@ -45,6 +45,7 @@
         evil-insert-state-cursor 'bar
         evil-visual-state-cursor 'hollow)
 
+  :config
   (add-hook 'doom-init-hook #'evil-mode)
   :config
   (evil-select-search-module 'evil-search-module 'evil-search)

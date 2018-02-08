@@ -194,7 +194,7 @@ Uses `shrink-window-if-larger-than-buffer'."
                window--sides-inhibit-check nil)
          (+popup|cleanup-rules)
          (dolist (prop +popup-window-parameters)
-           (map-delete prop window-persistent-parameters)))))
+           (map-delete window-persistent-parameters prop)))))
 
 ;;;###autoload
 (define-minor-mode +popup-buffer-mode
@@ -525,7 +525,7 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
           ((not (numberp slot))
            (error "Invalid slot %s specified" slot))
           ((not (numberp vslot))
-           (error "Invalid vslot %s specified" slot)))
+           (error "Invalid vslot %s specified" vslot)))
 
     (let* ((major (get-window-with-predicate
                    (lambda (window)

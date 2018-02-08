@@ -290,6 +290,13 @@ workspace to delete."
   (doom/cleanup-session))
 
 ;;;###autoload
+(defun +workspace/kill-session-and-quit ()
+  "Kill emacs without saving anything."
+  (interactive)
+  (let ((persp-auto-save-opt 0))
+    (kill-emacs)))
+
+;;;###autoload
 (defun +workspace/new (&optional name clone-p)
   "Create a new workspace named NAME. If CLONE-P is non-nil, clone the current
 workspace, otherwise the new workspace is blank."
@@ -488,44 +495,49 @@ created."
   (setq +workspaces--project-dir default-directory))
 
 ;;;###autoload
-(defun +workspaces|switch-counsel-project-action (project)
-  "A `counsel-projectile-switch-project-action' that creates a dedicated
-workspace for a new project, before prompting to open a file."
-  (when persp-mode
-    (let ((+workspaces--project-dir project)
-          (inhibit-message t))
-      (+workspaces|switch-to-project))))
-
-;;;###autoload
-(defun +workspaces|switch-to-project ()
+(defun +workspaces|switch-to-project (&optional inhibit-prompt)
   "Creates a workspace dedicated to a new project. If one already exists, switch
-to it. Should be hooked to `projectile-after-switch-project-hook'."
+to it. If in the main workspace and it's empty, recycle that workspace, without
+renaming it.
+
+Should be hooked to `projectile-after-switch-project-hook'."
   (when (and persp-mode +workspaces--project-dir)
     (unwind-protect
-        (let (persp-p)
-          (let* ((persp
-                  (let* ((default-directory +workspaces--project-dir)
-                         projectile-project-name
-                         projectile-require-project-root
-                         projectile-cached-buffer-file-name
-                         projectile-cached-project-root
-                         (project-name (projectile-project-name)))
-                    (or (setq persp-p (+workspace-get project-name t))
-                        (+workspace-new project-name))))
-                 (new-name (persp-name persp)))
-            (+workspace-switch new-name)
-            (unless persp-p
-              (switch-to-buffer (doom-fallback-buffer)))
-            (doom-project-find-file +workspaces--project-dir)
-            (+workspace-message
-             (format "Switched to '%s' in new workspace" new-name)
-             'success)))
+        (if (+workspace-buffer-list)
+            (let (persp-p)
+              (let* ((persp
+                      (let* ((default-directory +workspaces--project-dir)
+                             (project-name (doom-project-name 'nocache)))
+                        (or (setq persp-p (+workspace-get project-name t))
+                            (+workspace-new project-name))))
+                     (new-name (persp-name persp)))
+                (+workspace-switch new-name)
+                (unless persp-p
+                  (switch-to-buffer (doom-fallback-buffer)))
+                (unless inhibit-prompt
+                  (doom-project-find-file +workspaces--project-dir))
+                (+workspace-message
+                 (format "Switched to '%s' in new workspace" new-name)
+                 'success)))
+          (with-current-buffer (switch-to-buffer (doom-fallback-buffer))
+            (setq default-directory +workspaces--project-dir)
+            (message "Switched to '%s'" (doom-project-name 'nocache)))
+          (unless inhibit-prompt
+            (doom-project-find-file +workspaces--project-dir)))
       (setq +workspaces--project-dir nil))))
 
 
 ;;
 ;; Advice
 ;;
+
+;;;###autoload
+(defun +workspaces*switch-counsel-project-action (project)
+  "A `counsel-projectile-switch-project-action' that creates a dedicated
+workspace for a new project, before prompting to open a file."
+  (let ((+workspaces--project-dir project)
+        (inhibit-message t))
+    (+workspaces|switch-to-project 'inhibit-prompt)))
 
 ;;;###autoload
 (defun +workspaces*autosave-real-buffers (orig-fn &rest args)

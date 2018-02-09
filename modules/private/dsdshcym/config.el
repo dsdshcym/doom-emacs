@@ -38,6 +38,10 @@
         ;; prompt for the key passphrase.
         epa-pinentry-mode 'loopback))
 
+(after! smartparens
+  (dolist (brace '("(" "{" "["))
+    (sp-pair brace nil :post-handlers '(:add ("||\n[i]" "RET")))))
+
 (after! evil
   (setq-default evil-shift-width 2)
 

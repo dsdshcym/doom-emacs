@@ -305,12 +305,6 @@
       :i "C-e" #'doom/forward-to-last-non-comment-or-eol
       :i "C-u" #'doom/backward-kill-to-bol-and-indent
 
-      ;; Highjacks space/backspace to:
-      ;;   a) balance spaces inside brackets/parentheses ( | ) -> (|)
-      ;;   b) delete space-indented blocks intelligently
-      ;;   c) do none of this when inside a string
-      :i "SPC"                          #'doom/inflate-space-maybe
-      :i [remap delete-backward-char]   #'doom/deflate-space-maybe
       :i [remap newline]                #'doom/newline-and-indent
 
       ;; Restore common editing keys (and ESC) in minibuffer

@@ -20,6 +20,9 @@
 (after! magit
   (setq magit-repository-directories '(("~/Projects/" . 2))))
 
+(after! magithub
+  (setq magithub-clone-default-directory "~/Projects/"))
+
 (after! ledger
   (set! :popup "\\*Ledger" '((side . right) (size . 0.5))))
 

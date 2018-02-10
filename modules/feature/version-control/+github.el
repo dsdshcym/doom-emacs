@@ -3,4 +3,5 @@
 (use-package magithub
   :after magit
   :config
+  (setq magithub-dir (concat doom-cache-dir "magithub/"))
   (magithub-feature-autoinject t))

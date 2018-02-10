@@ -42,7 +42,8 @@
        snippets          ; my elves. They type so I don't have to
        spellcheck        ; tasing you for misspelling mispelling
        syntax-checker    ; tasing you for every semicolon you forget
-       version-control   ; remember, remember that commit in November
+       (version-control  ; remember, remember that commit in November
+        +github)
 
        :completion
        company           ; the ultimate code completion backend

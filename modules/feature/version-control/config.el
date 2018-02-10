@@ -1,6 +1,8 @@
 ;;; feature/version-control/config.el -*- lexical-binding: t; -*-
 
 (load! +git)
+(when (featurep! +github)
+  (load! +github))
 ;; TODO (load! +hg)
 
 ;;

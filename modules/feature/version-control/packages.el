@@ -16,4 +16,7 @@
   (when (featurep! :feature evil)
     (package! evil-magit)))
 
+(when (featurep! +github)
+  (package! magithub))
+
 ;;; TODO +hg

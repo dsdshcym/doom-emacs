@@ -415,6 +415,9 @@ unwanted space when exporting org-mode to html."
     (setq org-download-method 'attach)
     (setq org-download-screenshot-method "screencapture -i %s")))
 
+(def-package! org-rich-yank
+  :commands (org-rich-yank))
+
 (def-package! smartparens-org
   :config
   (sp-with-modes 'org-mode

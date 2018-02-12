@@ -7,3 +7,4 @@
 (package! ox-gfm)
 (package! org-mime)
 (package! org-download)
+(package! org-rich-yank :recipe (:fetcher github :repo "unhammer/org-rich-yank"))

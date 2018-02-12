@@ -47,6 +47,8 @@
 
      :n "a" #'org-agenda
 
+     :n "p" #'org-rich-yank
+
      :n "t" #'org-todo
 
      ;; More cycling options (timestamps, headlines, items, properties)

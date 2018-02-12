@@ -21,6 +21,7 @@
   (setq magit-repository-directories '(("~/Projects/" . 2))))
 
 (after! magithub
+  (setq magithub-preferred-remote-method 'clone_url)
   (setq magithub-clone-default-directory "~/Projects/"))
 
 (after! ledger

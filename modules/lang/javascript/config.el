@@ -39,8 +39,8 @@
 
   (map! :map js2-mode-map
         :localleader
-        :nvmo "r" #'+javascript/refactor-menu
-        :nvmo "S" #'+javascript/skewer-this-buffer))
+        :nr "r" #'+javascript/refactor-menu
+        :n  "S" #'+javascript/skewer-this-buffer))
 
 
 ;; A find-{definition,references} backend for js2-mode. NOTE The xref API is

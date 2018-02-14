@@ -137,19 +137,19 @@ containing (PACKAGE-SYMBOL OLD-VERSION-LIST NEW-VERSION-LIST).
 If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 
 Used by `doom//packages-update'."
+  (doom-initialize-packages t)
   (require 'async)
   (let (quelpa-pkgs elpa-pkgs)
     ;; Separate quelpa from elpa packages
-    (dolist (pkg (doom-get-packages t))
-      (let ((sym (car pkg)))
-        (when (and (or (not (doom-package-prop sym :freeze))
-                       include-frozen-p)
-                   (not (doom-package-prop sym :ignore))
-                   (not (doom-package-different-backend-p sym)))
-          (push sym
-                (if (eq (doom-package-backend sym) 'quelpa)
-                    quelpa-pkgs
-                  elpa-pkgs)))))
+    (dolist (pkg (mapcar #'car package-alist))
+      (when (and (or (not (doom-package-prop pkg :freeze))
+                     include-frozen-p)
+                 (not (doom-package-prop pkg :ignore))
+                 (not (doom-package-different-backend-p pkg)))
+        (push pkg
+              (if (eq (doom-package-backend pkg) 'quelpa)
+                  quelpa-pkgs
+                elpa-pkgs))))
     ;; The bottleneck in this process is quelpa's version checks, so check them
     ;; asynchronously.
     (let (futures)
@@ -160,6 +160,8 @@ Used by `doom//packages-update'."
                   (setq user-emacs-directory ,user-emacs-directory)
                   (let ((noninteractive t))
                     (load ,(expand-file-name "core.el" doom-core-dir)))
+                  (setq doom-packages ',doom-packages
+                        doom-modules ',doom-modules)
                   (doom-package-outdated-p ',pkg)))
               futures))
       (delq nil

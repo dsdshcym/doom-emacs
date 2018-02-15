@@ -47,7 +47,8 @@ compilation database is present in the project.")
   (push (cons #'+cc-objc-header-file-p 'objc-mode) magic-mode-alist)
 
   :init
-  (setq-default c-basic-offset tab-width)
+  (setq-default c-basic-offset tab-width
+                c-backspace-function #'delete-backward-char)
 
   :config
   (set! :electric '(c-mode c++-mode objc-mode java-mode)
@@ -84,18 +85,19 @@ compilation database is present in the project.")
   ;; custom bindings. We'll do this ourselves.
   (setq c-tab-always-indent nil
         c-electric-flag nil)
-  (dolist (key '("#" "{" "}" "/" "*" ";" "," ":" "(" ")"))
+  (dolist (key '("#" "{" "}" "/" "*" ";" "," ":" "(" ")" "\177"))
     (define-key c-mode-base-map key nil))
   ;; Smartparens and cc-mode both try to autoclose angle-brackets intelligently.
   ;; The result isn't very intelligent (causes redundant characters), so just do
   ;; it ourselves.
-  (map! :map c++-mode-map
-        "<" nil
-        :i ">" #'+cc/autoclose->-maybe)
+  (map! :map c++-mode-map "<" nil ">" nil)
 
   ;; ...and leave it to smartparens
+  (sp-with-modes '(c++-mode objc-mode)
+    (sp-local-pair "<" ">"
+                   :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p)
+                   :post-handlers '(("| " "SPC"))))
   (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
-    (sp-local-pair "<" ">" :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p))
     (sp-local-pair "/*" "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
     ;; Doxygen blocks
     (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
@@ -117,7 +119,7 @@ compilation database is present in the project.")
   (add-hook! (c-mode c++-mode objc-mode) #'+cc|init-irony-mode)
   :config
   (unless (file-directory-p irony-server-install-prefix)
-    (warn "irony-mode: server isn't installed; run M-x irony-install-server"))
+    (warn! "Irony server isn't installed. Run M-x irony-install-server"))
   ;; Initialize compilation database, if present. Otherwise, fall back on
   ;; `+cc-default-compiler-options'.
   (add-hook 'irony-mode-hook #'+cc|irony-init-compile-options))
@@ -185,9 +187,9 @@ compilation database is present in the project.")
   :when (featurep! :completion company)
   :after glsl-mode
   :config
-  (if (executable-find "glslangValidator")
-      (warn "glsl-mode: couldn't find glslangValidator, disabling company-glsl")
-    (set! :company-backend 'glsl-mode '(company-glsl))))
+  (unless (executable-find "glslangValidator")
+    (warn! "Couldn't find glslangValidator. Code completion is disabled"))
+  (set! :company-backend 'glsl-mode '(company-glsl)))
 
 
 ;;
@@ -208,7 +210,7 @@ compilation database is present in the project.")
 
   (let ((bins (cl-remove-if #'executable-find '("rdm" "rc"))))
     (if (/= (length bins) 0)
-        (warn "cc-mode: couldn't find the rtag client and/or server programs %s, disabling rtags support" bins)
+        (warn! "Couldn't find the rtag client and/or server programs %s. Disabling rtags support" bins)
       (add-hook! (c-mode c++-mode) #'rtags-start-process-unless-running)
       (set! :lookup '(c-mode c++-mode)
         :definition #'rtags-find-symbol-at-point

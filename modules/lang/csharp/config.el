@@ -2,6 +2,8 @@
 
 (def-package! csharp-mode :mode "\\.cs$")
 
+(def-package! shader-mode :mode "\\.shader$") ; unity shaders
+
 
 (def-package! omnisharp
   :after csharp-mode
@@ -9,10 +11,10 @@
   (setq omnisharp-auto-complete-want-documentation nil
         omnisharp-cache-directory (concat doom-cache-dir "omnisharp"))
   :config
-  (add-hook! csharp-mode #'(eldoc-mode flycheck-mode omnisharp-mode))
-
   (unless (file-exists-p (omnisharp--server-installation-path t))
-    (warn "csharp-mode: omnisharp server isn't installed, completion won't work"))
+    (warn! "Omnisharp server isn't installed, completion won't work"))
+
+  (add-hook! csharp-mode #'(eldoc-mode flycheck-mode omnisharp-mode))
 
   (defun +csharp|cleanup-omnisharp-server ()
     "Clean up the omnisharp server once you kill the last csharp-mode buffer."
@@ -53,7 +55,4 @@
           :n "r" (λ! (omnisharp-unit-test "fixture"))
           :n "s" (λ! (omnisharp-unit-test "single"))
           :n "a" (λ! (omnisharp-unit-test "all")))))
-
-
-(def-package! shader-mode :mode "\\.shader$") ; unity shaders
 

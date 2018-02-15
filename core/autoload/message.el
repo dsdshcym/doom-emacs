@@ -36,6 +36,17 @@
   "List of styles.")
 
 ;;;###autoload
+(defun doom-ansi-apply (code message &rest args)
+  "Apply the ansi CODE to formatted MESSAGE with ARGS."
+  (let ((rule (or (assq code doom-message-fg)
+                  (assq code doom-message-bg)
+                  (assq code doom-message-fx))))
+    (format "\e[%dm%s\e[%dm"
+            (cdr rule)
+            (apply #'format message args)
+            0)))
+
+;;;###autoload
 (defmacro format! (message &rest args)
   "An alternative to `format' that strips out ANSI codes if used in an
 interactive session."
@@ -70,26 +81,13 @@ interactive session."
        (goto-char (point-max)))))
 
 ;;;###autoload
-(defun doom-ansi-apply (code format &rest args)
-  (let ((rule (or (assq code doom-message-fg)
-                  (assq code doom-message-bg)
-                  (assq code doom-message-fx))))
-    (format "\e[%dm%s\e[%dm"
-            (cdr rule)
-            (apply #'format format args)
-            0)))
-
-;;;###autoload
 (defmacro warn! (message &rest args)
   "Output a colored warning for the current module in the *Messages* buffer."
-  (let ((msg (format "WARNING: %s" (format message args))))
-    (if (file-in-directory-p load-file-name doom-modules-dir)
-        `(cl-destructuring-bind (cat . mod) (doom-module-from-path load-file-name)
-           (message
-            "%s"
-            (propertize (format "%s %s" (list cat mod) ,msg)
-                        'face 'warning)))
-      `(message "%s" (propertize ,msg 'face 'warning)))))
+  (if (file-in-directory-p load-file-name doom-modules-dir)
+      `(cl-destructuring-bind (cat . mod) (doom-module-from-path ,load-file-name)
+         (delay-warning (format "%s %s" cat mod) (format ,message ,@args) :warning))
+    `(delay-warning (file-relative-name load-file-name doom-emacs-dir)
+                    (format ,message ,@args) :warning)))
 
 ;;;###autoload
 (defmacro log! (message &rest args)

@@ -3,7 +3,6 @@
 
 ;; core.el
 (package! auto-minor-mode :pin "17cfa1b54800fdef2975c0c0531dad34846a5065")
-(package! gcmh :pin "f542908b9ae4405d70fa70f42bd62618c5de4b95")
 
 ;; core-ui.el
 (package! all-the-icons :pin "1416f37984486a44c6c0cbe0a2c985e82f965b6b")

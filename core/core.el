@@ -55,6 +55,10 @@ DEBUG envvar will enable this at startup.")
 (defvar doom-interactive-mode (not noninteractive)
   "If non-nil, Emacs is in interactive mode.")
 
+(defvar doom-gc-cons-threshold 16777216 ; 16mb
+  "The default value to use for `gc-cons-threshold'. If you experience freezing,
+decrease this. If you experience stuttering, increase this.")
+
 ;;; Directories/files
 (defconst doom-emacs-dir
   (eval-when-compile (file-truename user-emacs-directory))
@@ -269,14 +273,28 @@ users).")
 ;; accidentally deleting wanted files.
 (setq delete-by-moving-to-trash IS-MAC)
 
-;; Adopt a sneaky garbage collection strategy of waiting until idle time to
-;; collect and staving off the collector while the user is working.
-(unless doom-interactive-mode
-  (add-transient-hook! 'pre-command-hook (gcmh-mode +1))
-  (with-eval-after-load 'gcmh
-    (setq gcmh-idle-delay 10
-          gcmh-verbose doom-debug-mode)
-    (add-hook 'focus-out-hook #'gcmh-idle-garbage-collect)))
+;; To speed up minibuffer commands (like helm and ivy), we defer garbage
+;; collection while the minibuffer is active.
+(defun doom-defer-garbage-collection-h ()
+  "Increase `gc-cons-threshold' to stave off garbage collection."
+  (setq gc-cons-threshold most-positive-fixnum))
+
+(defun doom-restore-garbage-collection-h ()
+  "Restore `gc-cons-threshold' to a reasonable value so the GC can do its job."
+  ;; Defer it so that commands launched immediately after will enjoy the
+  ;; benefits.
+  (run-at-time
+   1 nil (lambda () (setq gc-cons-threshold doom-gc-cons-threshold))))
+
+(add-hook 'minibuffer-setup-hook #'doom-defer-garbage-collection-h)
+(add-hook 'minibuffer-exit-hook #'doom-restore-garbage-collection-h)
+
+;; Not restoring these to their defaults will cause stuttering/freezes.
+(add-hook 'emacs-startup-hook #'doom-restore-garbage-collection-h)
+
+;; When Emacs loses focus seems like a great time to do some garbage collection
+;; all sneaky breeky like, so we can return to a fresh(er) Emacs.
+(add-hook 'focus-out-hook #'garbage-collect)
 
 ;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
 ;;      reason. Disabling it completely could have many side-effects, so we

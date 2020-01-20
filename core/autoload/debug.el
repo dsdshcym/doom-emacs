@@ -343,6 +343,5 @@ will be automatically appended to the result."
           use-package-verbose value
           jka-compr-verbose value
           lsp-log-io value
-          gcmh-verbose value
           magit-refresh-verbose value)
     (message "Debug mode %s" (if value "on" "off"))))

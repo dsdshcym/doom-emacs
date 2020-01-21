@@ -292,10 +292,6 @@ users).")
 ;; Not restoring these to their defaults will cause stuttering/freezes.
 (add-hook 'emacs-startup-hook #'doom-restore-garbage-collection-h)
 
-;; When Emacs loses focus seems like a great time to do some garbage collection
-;; all sneaky breeky like, so we can return to a fresh(er) Emacs.
-(add-hook 'focus-out-hook #'garbage-collect)
-
 ;; HACK `tty-run-terminal-initialization' is *tremendously* slow for some
 ;;      reason. Disabling it completely could have many side-effects, so we
 ;;      defer it until later.
